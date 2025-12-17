@@ -2,7 +2,6 @@
 
 HobbyHub is a premium social platform designed for hobbyists to connect, share communities, and interact in real-time. Built with the MERN stack (MongoDB, Express, React, Node.js) and powered by Socket.io for live features.
 
-![HobbyHub Preview](./client/public/vite.svg) *Add a screenshot here*
 
 ## 🚀 Features
 
