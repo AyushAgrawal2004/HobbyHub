@@ -78,14 +78,23 @@ const ChatRoom = ({ groupId, user }) => {
         socket.emit('vote_poll', { messageId, optionIndex, userId: user._id });
     };
 
+    const playTypingSound = () => {
+        const audio = new Audio('/sounds/typing.mp3');
+        audio.volume = 0.5;
+        audio.currentTime = 0;
+        audio.play().catch(() => { });
+    };
+
     return (
         <div className="glass-panel" style={{ height: '600px', display: 'flex', flexDirection: 'column' }}>
+            {/* ... (Header/Message List remains same) */}
             <div style={{ padding: '20px', borderBottom: '1px solid var(--glass-border)' }}>
                 <h3>Group Chat</h3>
             </div>
 
             <div style={{ flex: 1, overflowY: 'auto', padding: '20px', display: 'flex', flexDirection: 'column', gap: '15px' }}>
                 {messages.map((msg, idx) => {
+                    // ... (Message rendering logic)
                     if (msg.type === 'system') {
                         return (
                             <div key={idx} style={{ textAlign: 'center', margin: '10px 0', opacity: 0.7 }}>
@@ -95,7 +104,7 @@ const ChatRoom = ({ groupId, user }) => {
                             </div>
                         );
                     }
-
+                    // ... (Existing message mapping)
                     const senderId = msg.sender?._id || msg.sender;
                     const currentUserId = user._id;
                     const isOwn = String(senderId) === String(currentUserId);
@@ -120,7 +129,8 @@ const ChatRoom = ({ groupId, user }) => {
                             )}
 
                             <div style={{
-                                background: isOwn ? 'linear-gradient(135deg, var(--accent), var(--accent-hover))' : 'var(--bg-secondary)',
+                                background: isOwn ? 'linear-gradient(135deg, var(--accent), var(--accent-hover))' : 'rgba(255,255,255,0.4)',
+                                backdropFilter: isOwn ? 'none' : 'blur(5px)',
                                 padding: '12px 16px',
                                 borderRadius: '12px',
                                 borderTopRightRadius: isOwn ? '2px' : '12px',
@@ -166,7 +176,7 @@ const ChatRoom = ({ groupId, user }) => {
                         </div>
                     );
                 })}
-                <div ref={messagesEndRef} />
+                {/* Re-targeting just the input area in next tool call */}
             </div>
 
             <div style={{ padding: '20px', borderTop: '1px solid var(--glass-border)' }}>
@@ -176,6 +186,7 @@ const ChatRoom = ({ groupId, user }) => {
                             placeholder="Ask a question..."
                             value={pollQuestion}
                             onChange={e => setPollQuestion(e.target.value)}
+                            onKeyDown={playTypingSound}
                             style={{ width: '100%', padding: '8px', marginBottom: '8px', background: 'var(--bg-secondary)', border: 'none', color: 'var(--text-primary)', borderRadius: '4px' }}
                         />
                         {pollOptions.map((opt, i) => (
@@ -188,6 +199,7 @@ const ChatRoom = ({ groupId, user }) => {
                                     newOpts[i] = e.target.value;
                                     setPollOptions(newOpts);
                                 }}
+                                onKeyDown={playTypingSound}
                                 style={{ width: '100%', padding: '8px', marginBottom: '4px', background: 'var(--bg-secondary)', border: 'none', color: 'var(--text-primary)', borderRadius: '4px' }}
                             />
                         ))}
@@ -201,13 +213,15 @@ const ChatRoom = ({ groupId, user }) => {
                             type="text"
                             value={newMessage}
                             onChange={(e) => setNewMessage(e.target.value)}
+                            onKeyDown={playTypingSound}
                             placeholder="Type a message..."
                             style={{
                                 flex: 1,
                                 padding: '12px',
                                 borderRadius: '8px',
                                 border: '1px solid var(--glass-border)',
-                                background: 'var(--bg-secondary)',
+                                background: 'rgba(255,255,255,0.4)',
+                                backdropFilter: 'blur(5px)',
                                 color: 'var(--text-primary)'
                             }}
                         />

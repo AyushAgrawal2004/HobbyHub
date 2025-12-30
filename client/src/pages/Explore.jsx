@@ -3,6 +3,7 @@ import api from '../utils/api';
 import PostCard from '../components/PostCard';
 import CreatePostModal from '../components/CreatePostModal';
 import { Plus } from 'lucide-react';
+import { playButtonPress } from '../utils/audio';
 
 const Explore = () => {
     const [posts, setPosts] = useState([]);
@@ -35,6 +36,7 @@ const Explore = () => {
     };
 
     const handleDeletePost = async (postId) => {
+        playButtonPress();
         if (!window.confirm('Are you sure you want to delete this post?')) return;
         try {
             await api.delete(`/posts/${postId}`);
@@ -48,7 +50,7 @@ const Explore = () => {
     if (loading) return <div style={{ paddingTop: '100px', textAlign: 'center' }}>Loading feed...</div>;
 
     return (
-        <div style={{ paddingTop: '100px', minHeight: '100vh', paddingBottom: '80px', background: 'var(--bg-primary)' }}>
+        <div style={{ paddingTop: '100px', minHeight: '100vh', paddingBottom: '80px' }}>
             <div className="container" style={{ maxWidth: '600px' }}>
                 <h1 style={{ marginBottom: '30px', textAlign: 'center' }}>Explore</h1>
 
@@ -65,7 +67,7 @@ const Explore = () => {
 
             {/* Floating Action Button for Creating Post */}
             <button
-                onClick={() => setShowCreateModal(true)}
+                onClick={() => { playButtonPress(); setShowCreateModal(true); }}
                 style={{
                     position: 'fixed',
                     bottom: '30px',

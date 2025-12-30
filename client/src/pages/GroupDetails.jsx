@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import api from '../utils/api';
 import { useParams, Link } from 'react-router-dom';
 import ChatRoom from '../components/ChatRoom';
+import { playButtonPress } from '../utils/audio';
 
 const GroupDetails = () => {
     const { id } = useParams();
@@ -66,31 +67,53 @@ const GroupDetails = () => {
     return (
         <div style={{ paddingTop: '100px', minHeight: '100vh', paddingBottom: '50px' }}>
             <div className="container">
-                <div className="glass-panel" style={{ padding: '40px', marginBottom: '40px' }}>
+                <div className="neo-card" style={{ padding: '40px', marginBottom: '40px', border: '3px solid black', boxShadow: '8px 8px 0px 0px black' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                         <div>
-                            <h1 style={{ fontSize: '3rem', marginBottom: '10px' }}>{group.name}</h1>
-                            <span style={{ display: 'inline-block', padding: '4px 12px', background: 'rgba(139, 92, 246, 0.1)', color: 'var(--accent)', borderRadius: '20px', fontSize: '1rem', marginBottom: '20px' }}>
+                            <h1 style={{ fontSize: '3.5rem', marginBottom: '10px', lineHeight: 0.9 }}>{group.name}</h1>
+                            <span style={{ display: 'inline-block', padding: '6px 16px', background: 'black', color: 'white', fontSize: '1rem', marginBottom: '20px', fontWeight: 'bold' }}>
                                 {group.category}
                             </span>
                         </div>
-                        <div style={{ display: 'flex', gap: '10px' }}>
+                        <div style={{ display: 'flex', gap: '15px' }}>
                             {isMember && (
                                 <>
-                                    <Link to={`/group/${id}/create-event`} state={{ groupName: group.name }} className="btn btn-outline">
-                                        Create Event
+                                    <Link
+                                        to={`/group/${id}/create-event`}
+                                        state={{ groupName: group.name }}
+                                        className="neo-btn neo-btn-secondary"
+                                        style={{ border: '3px solid black', display: 'flex', alignItems: 'center' }}
+                                        onClick={playButtonPress}
+                                    >
+                                        CREATE EVENT
                                     </Link>
-                                    <button onClick={handleLeave} className="btn" style={{ background: 'var(--error)', color: 'white' }}>
-                                        Leave Group
+                                    <button
+                                        onClick={() => {
+                                            playButtonPress();
+                                            handleLeave();
+                                        }}
+                                        className="neo-btn"
+                                        style={{ background: 'var(--error)', color: 'white', border: '3px solid black' }}
+                                    >
+                                        LEAVE GROUP
                                     </button>
                                 </>
                             )}
                             {!isMember && (
-                                <button onClick={handleJoin} className="btn btn-primary">Join Group</button>
+                                <button
+                                    onClick={() => {
+                                        playButtonPress();
+                                        handleJoin();
+                                    }}
+                                    className="neo-btn"
+                                    style={{ fontSize: '1.2rem', padding: '15px 30px', border: '3px solid black' }}
+                                >
+                                    JOIN GROUP
+                                </button>
                             )}
                         </div>
                     </div>
-                    <p style={{ fontSize: '1.2rem', color: 'var(--text-secondary)', lineHeight: '1.8' }}>{group.description}</p>
+                    <p style={{ fontSize: '1.2rem', color: 'var(--text-secondary)', lineHeight: '1.6', fontWeight: '500' }}>{group.description}</p>
                 </div>
 
                 {/* Events Section */}

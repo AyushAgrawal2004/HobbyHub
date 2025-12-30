@@ -12,9 +12,17 @@ const filter = new Filter();
 
 const app = express();
 const server = http.createServer(app);
+
+// Allowed Origins (Production + Local)
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://127.0.0.1:5173",
+  process.env.CLIENT_URL // Production frontend URL
+];
+
 const io = new Server(server, {
   cors: {
-    origin: ["http://localhost:5173", "http://127.0.0.1:5173"],
+    origin: allowedOrigins,
     methods: ["GET", "POST"],
     credentials: true,
     allowedHeaders: ["my-custom-header"],
@@ -25,7 +33,7 @@ const PORT = process.env.PORT || 5000;
 
 // Middleware
 app.use(cors({
-  origin: ["http://localhost:5173", "http://127.0.0.1:5173"],
+  origin: allowedOrigins,
   credentials: true
 }));
 app.use(express.json());
@@ -179,6 +187,7 @@ app.use('/uploads', express.static('uploads'));
 app.use('/api/events', require('./routes/events'));
 app.use('/api/messages', require('./routes/messages'));
 app.use('/api/contests', require('./routes/contests'));
+app.use('/api/registrations', require('./routes/registrations'));
 app.use('/api/users', require('./routes/users'));
 
 // Global Error Handler

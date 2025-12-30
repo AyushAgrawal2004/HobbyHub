@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { X, Image, Music, Upload } from 'lucide-react';
 import api from '../utils/api';
 import { motion } from 'framer-motion';
+import { playButtonPress } from '../utils/audio';
 
 const CreatePostModal = ({ onClose, onPostCreated }) => {
     const [caption, setCaption] = useState('');
@@ -27,6 +28,7 @@ const CreatePostModal = ({ onClose, onPostCreated }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        playButtonPress();
         if (!image) return alert('Please select an image');
 
         setLoading(true);
@@ -36,11 +38,7 @@ const CreatePostModal = ({ onClose, onPostCreated }) => {
         formData.append('caption', caption);
 
         try {
-            const res = await api.post('/posts', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            });
+            const res = await api.post('/posts', formData);
             onPostCreated(res.data);
             onClose();
         } catch (err) {
@@ -54,25 +52,28 @@ const CreatePostModal = ({ onClose, onPostCreated }) => {
     return (
         <div style={{
             position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-            background: 'rgba(0,0,0,0.5)', zIndex: 1000,
+            background: 'rgba(255,255,255,0.8)', zIndex: 1000,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             backdropFilter: 'blur(5px)'
         }}>
             <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="glass-panel"
-                style={{ width: '90%', maxWidth: '500px', padding: '30px', position: 'relative', background: 'var(--bg-primary)' }}
+                className="neo-card"
+                style={{ width: '95%', maxWidth: '550px', padding: '40px', position: 'relative', border: '3px solid black', boxShadow: '12px 12px 0px 0px black' }}
             >
-                <button onClick={onClose} style={{ position: 'absolute', top: '15px', right: '15px', background: 'none', border: 'none', cursor: 'pointer' }}>
-                    <X />
+                <button onClick={() => { playButtonPress(); onClose(); }} style={{ position: 'absolute', top: '15px', right: '15px', background: 'black', color: 'white', border: 'none', cursor: 'pointer', padding: '5px' }}>
+                    <X size={24} />
                 </button>
 
-                <h2 style={{ marginBottom: '20px', textAlign: 'center' }}>Create New Post</h2>
+                <h2 style={{ marginBottom: '30px', textAlign: 'center', fontSize: '3rem', lineHeight: 0.9, wordBreak: 'break-word' }}>
+                    CREATE <br />
+                    <span style={{ color: 'var(--accent)', background: 'black', padding: '0 10px' }}>NEW POST</span>
+                </h2>
 
                 <form onSubmit={handleSubmit}>
                     {/* Image Upload */}
-                    <div style={{ marginBottom: '20px' }}>
+                    <div style={{ marginBottom: '25px' }}>
                         <input
                             type="file"
                             id="image-upload"
@@ -82,31 +83,32 @@ const CreatePostModal = ({ onClose, onPostCreated }) => {
                         />
                         <label
                             htmlFor="image-upload"
+                            onClick={playButtonPress}
                             style={{
                                 display: 'block',
                                 width: '100%',
-                                height: '200px',
-                                border: '2px dashed var(--glass-border)',
-                                borderRadius: '10px',
+                                height: '250px',
+                                border: '3px solid black',
                                 display: 'flex',
                                 flexDirection: 'column',
                                 alignItems: 'center',
                                 justifyContent: 'center',
                                 cursor: 'pointer',
-                                background: preview ? `url(${preview}) center/cover no-repeat` : 'var(--bg-secondary)'
+                                background: preview ? `url(${preview}) center/cover no-repeat` : '#ffffff',
+                                boxShadow: '4px 4px 0px 0px rgba(0,0,0,0.1)'
                             }}
                         >
                             {!preview && (
                                 <>
-                                    <Image size={40} style={{ marginBottom: '10px', color: 'var(--text-secondary)' }} />
-                                    <span style={{ color: 'var(--text-secondary)' }}>Click to upload image</span>
+                                    <Image size={50} style={{ marginBottom: '15px', color: 'black' }} />
+                                    <span style={{ color: 'black', fontWeight: 'bold', textTransform: 'uppercase' }}>Click to upload image</span>
                                 </>
                             )}
                         </label>
                     </div>
 
                     {/* Music Upload */}
-                    <div style={{ marginBottom: '20px' }}>
+                    <div style={{ marginBottom: '25px' }}>
                         <input
                             type="file"
                             id="music-upload"
@@ -116,37 +118,39 @@ const CreatePostModal = ({ onClose, onPostCreated }) => {
                         />
                         <label
                             htmlFor="music-upload"
-                            className="btn btn-outline"
-                            style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}
+                            className="neo-btn neo-btn-secondary"
+                            onClick={playButtonPress}
+                            style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', border: '2px solid black', cursor: 'pointer' }}
                         >
                             <Music size={20} />
-                            {music ? music.name : 'Add Background Music (Optional)'}
+                            <span style={{ fontWeight: 'bold' }}>{music ? music.name : 'ADD BACKGROUND MUSIC (OPTIONAL)'}</span>
                         </label>
                     </div>
 
                     <textarea
                         value={caption}
                         onChange={(e) => setCaption(e.target.value)}
-                        placeholder="Write a caption..."
+                        placeholder="WRITE A CAPTION..."
+                        className="neo-input"
                         style={{
                             width: '100%',
                             padding: '15px',
-                            borderRadius: '10px',
-                            border: '1px solid var(--glass-border)',
-                            background: 'var(--bg-secondary)',
-                            minHeight: '100px',
-                            marginBottom: '20px',
-                            resize: 'none'
+                            minHeight: '120px',
+                            marginBottom: '30px',
+                            resize: 'none',
+                            color: 'black',
+                            border: '3px solid black',
+                            fontSize: '1.2rem'
                         }}
                     />
 
                     <button
                         type="submit"
-                        className="btn btn-primary"
-                        style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}
+                        className="neo-btn"
+                        style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', fontSize: '1.2rem', padding: '15px', background: 'black', color: 'var(--accent-lime)' }}
                         disabled={loading}
                     >
-                        {loading ? 'Uploading...' : <><Upload size={20} /> Share Post</>}
+                        {loading ? 'UPLOADING...' : <><Upload size={24} /> <span style={{ fontWeight: '800' }}>SHARE POST</span></>}
                     </button>
                 </form>
             </motion.div>

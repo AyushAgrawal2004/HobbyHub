@@ -3,6 +3,10 @@ import io from 'socket.io-client';
 import './Chat.css';
 import api from '../utils/api';
 import Filter from 'bad-words';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
+import { playButtonPress } from '../utils/audio';
+
 const filter = new Filter();
 
 // Initialize socket outside component to prevent multiple connections
@@ -17,8 +21,36 @@ const Chat = () => {
     const [showRules, setShowRules] = useState(true);
     const nameRef = useRef(name);
     const chatContainerRef = useRef(null);
+    const rulesOverlayRef = useRef(null);
+    const joinOverlayRef = useRef(null);
+    const pageRef = useRef(null);
     const [userProfile, setUserProfile] = useState(null);
     const audioRef = useRef(new Audio('/notification.mp3'));
+
+    useGSAP(() => {
+        // Animate page content
+        gsap.from(pageRef.current, { opacity: 0, duration: 0.8 });
+    }, []);
+
+    useGSAP(() => {
+        if (!showRules) {
+            gsap.to(rulesOverlayRef.current, {
+                opacity: 0,
+                duration: 0.5,
+                onComplete: () => {
+                    if (rulesOverlayRef.current) rulesOverlayRef.current.style.display = 'none';
+                }
+            });
+        } else {
+            gsap.from(rulesOverlayRef.current, { opacity: 0, y: -20, duration: 0.5, delay: 0.2 });
+        }
+    }, [showRules]);
+
+    useGSAP(() => {
+        if (!hasJoined && !showRules) {
+            gsap.from(joinOverlayRef.current, { opacity: 0, scale: 0.9, duration: 0.4 });
+        }
+    }, [hasJoined, showRules]);
 
     useEffect(() => {
         // Pre-load audio
@@ -76,12 +108,21 @@ const Chat = () => {
 
     // ... (auto-scroll useEffect remains same)
 
+    // Auto-scroll logic needs to be here if I truncated it in replace
+    useEffect(() => {
+        if (chatContainerRef.current) {
+            chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+        }
+    }, [messages]);
+
+
     const appendMessage = (msgData) => {
         setMessages(prev => [...prev, { ...msgData, id: Date.now() }]);
     };
 
     const handleJoin = (e) => {
         e.preventDefault();
+        playButtonPress();
         if (joinName.trim()) {
             setName(joinName);
             setHasJoined(true);
@@ -126,6 +167,7 @@ const Chat = () => {
     }, []);
 
     const handleBlockUser = async (username) => {
+        playButtonPress();
         if (!window.confirm(`Are you sure you want to block ${username} from Global Chat?`)) return;
         try {
             // First find user ID by username (we might need a new route or just fetch all users and find, but let's assume we can get it)
@@ -148,6 +190,7 @@ const Chat = () => {
 
     const handleSend = (e) => {
         e.preventDefault();
+        playButtonPress();
         const message = messageInp.trim();
         if (!message) return;
 
@@ -163,9 +206,9 @@ const Chat = () => {
     // ... (rest of render)
 
     return (
-        <div className="chat-page-container">
+        <div ref={pageRef} className="chat-page-container">
             {/* Rules Modal */}
-            <div className={`chat-join-overlay ${showRules ? 'visible' : 'hidden'}`} style={{ display: showRules ? 'flex' : 'none', zIndex: 2001 }}>
+            <div ref={rulesOverlayRef} className={`chat-join-overlay ${showRules ? 'visible' : 'hidden'}`} style={{ display: showRules ? 'flex' : 'none', zIndex: 2001 }}>
                 <div className="chat-join-box" style={{ maxWidth: '500px', textAlign: 'left' }}>
                     {/* ... (rules content) ... */}
                     <div style={{ marginBottom: '20px', color: 'var(--text-secondary)', lineHeight: '1.6' }}>
@@ -179,6 +222,7 @@ const Chat = () => {
                     </div>
                     <button
                         onClick={() => {
+                            playButtonPress();
                             setShowRules(false);
                             enableAudio();
                         }}
@@ -192,7 +236,7 @@ const Chat = () => {
 
             {/* Join Overlay (only show if rules are accepted) */}
             {!hasJoined && !showRules && (
-                <div className="chat-join-overlay">
+                <div ref={joinOverlayRef} className="chat-join-overlay">
                     <div className="chat-join-box">
                         <h2>Join Anonymous Chat</h2>
                         <form onSubmit={handleJoin}>
@@ -225,7 +269,7 @@ const Chat = () => {
                                 {msg.position === 'chat-right' && (
                                     <div className="chat-avatar" style={{ marginRight: '10px', width: '35px', height: '35px', borderRadius: '50%', overflow: 'hidden', flexShrink: 0 }}>
                                         {msg.profilePicture ? (
-                                            <img src={`${import.meta.env.VITE_API_URL}${msg.profilePicture}`} alt={msg.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                            <img src={msg.profilePicture.startsWith('http') ? msg.profilePicture : `${import.meta.env.VITE_API_URL}${msg.profilePicture}`} alt={msg.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                         ) : (
                                             <div style={{ width: '100%', height: '100%', background: 'var(--accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white' }}>{msg.name?.[0]?.toUpperCase()}</div>
                                         )}
@@ -258,7 +302,7 @@ const Chat = () => {
                                 {msg.position === 'chat-left' && (
                                     <div className="chat-avatar right" style={{ marginLeft: '10px', width: '35px', height: '35px', borderRadius: '50%', overflow: 'hidden', flexShrink: 0 }}>
                                         {msg.profilePicture ? (
-                                            <img src={`${import.meta.env.VITE_API_URL}${msg.profilePicture}`} alt="You" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                            <img src={msg.profilePicture.startsWith('http') ? msg.profilePicture : `${import.meta.env.VITE_API_URL}${msg.profilePicture}`} alt="You" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                         ) : (
                                             <div style={{ width: '100%', height: '100%', background: 'var(--accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white' }}>{name?.[0]?.toUpperCase()}</div>
                                         )}
@@ -281,6 +325,12 @@ const Chat = () => {
                         autoComplete="off"
                         value={messageInp}
                         onChange={(e) => setMessageInp(e.target.value)}
+                        onKeyDown={() => {
+                            const audio = new Audio('/sounds/typing.mp3');
+                            audio.volume = 0.5;
+                            audio.currentTime = 0;
+                            audio.play().catch(() => { });
+                        }}
                         disabled={!hasJoined}
                     />
                     <button className="chat-btn" type="submit" disabled={!hasJoined}>Send</button>

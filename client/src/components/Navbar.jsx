@@ -1,11 +1,11 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { Users, LogOut } from 'lucide-react';
 import api from '../utils/api';
 
 const Navbar = () => {
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
+    const [showDropdown, setShowDropdown] = useState(false);
 
     const checkUser = async () => {
         const storedUser = localStorage.getItem('user');
@@ -44,57 +44,108 @@ const Navbar = () => {
         navigate('/login');
     };
 
+    const playNavSound = () => {
+        const audio = new Audio('/sounds/nav_jump.mp3');
+        audio.volume = 0.6;
+        audio.play().catch(e => console.error("Audio play failed", e));
+    };
+
     return (
-        <nav className="glass-panel" style={{
+        <nav style={{
             position: 'fixed',
-            top: '20px',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            width: '90%',
-            maxWidth: '1200px',
+            top: '0',
+            left: '0',
+            width: '100%',
             zIndex: 1000,
-            padding: '1rem 2rem',
+            borderBottom: '4px solid black',
             display: 'flex',
             justifyContent: 'space-between',
-            alignItems: 'center'
+            alignItems: 'center',
+            padding: '15px 40px',
+            boxShadow: '0px 4px 0px rgba(0,0,0,1)',
+            // BACKGROUND LAYERS
+            background: `
+                linear-gradient(to bottom, rgba(245, 243, 239, 0.95), rgba(245, 243, 239, 0.95)),
+                url('/img/bg-image.png')
+            `,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundBlendMode: 'multiply'
         }}>
-            <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--text-primary)' }}>
-                <Users size={28} color="var(--accent)" />
-                <span>HobbyHub</span>
-            </Link>
+            {/* Logo Area */}
+            <div className="logo" style={{
+                fontFamily: 'Syne, sans-serif',
+                fontSize: '2rem',
+                fontWeight: '800',
+                letterSpacing: '-1px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px',
+                color: 'black',
+                textTransform: 'uppercase'
+            }}>
+                <span>Hobby<span style={{ color: 'var(--accent)' }}>Hub</span></span>
+            </div>
 
-            <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
-                <Link to="/about" style={{ color: 'var(--text-secondary)', fontWeight: '500' }}>About Us</Link>
-                <Link to="/explore" style={{ color: 'var(--text-secondary)', fontWeight: '500' }}>Posts</Link>
+            {/* Navigation Links */}
+            <div style={{ display: 'flex', gap: '30px', alignItems: 'center' }}>
+                <NavLink to="/about" onClick={playNavSound} style={{ fontWeight: '700', textTransform: 'uppercase', fontSize: '0.9rem', letterSpacing: '0.5px' }}>ABOUT</NavLink>
+                <NavLink to="/explore" onClick={playNavSound} style={{ fontWeight: '700', textTransform: 'uppercase', fontSize: '0.9rem', letterSpacing: '0.5px' }}>POSTS</NavLink>
+
                 {user ? (
                     <>
-                        <Link to="/dashboard" style={{ color: 'var(--text-secondary)', fontWeight: '500' }}>Dashboard</Link>
-                        <Link to="/profile" style={{ color: 'var(--text-secondary)', fontWeight: '500' }}>Profile</Link>
-                        <Link to="/chat" style={{ color: 'var(--text-secondary)', fontWeight: '500' }}>Global Chat</Link>
-
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '6px 14px', background: 'var(--bg-secondary)', borderRadius: '20px', border: '1px solid var(--glass-border)' }}>
-                            {user.profilePicture ? (
+                        <NavLink to="/dashboard" onClick={playNavSound} style={{ fontWeight: '700', textTransform: 'uppercase', fontSize: '0.9rem', letterSpacing: '0.5px' }}>DASHBOARD</NavLink>
+                        <NavLink to="/chat" onClick={playNavSound} style={{ fontWeight: '700', textTransform: 'uppercase', fontSize: '0.9rem', letterSpacing: '0.5px' }}>CHAT</NavLink>
+                        <div style={{ position: 'relative', marginLeft: '20px' }}
+                            onMouseEnter={() => setShowDropdown(true)}
+                            onMouseLeave={() => setShowDropdown(false)}>
+                            <div style={{
+                                display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer',
+                                padding: '5px 15px', border: '2px solid black', borderRadius: '30px', background: 'white'
+                            }}>
                                 <img
-                                    src={`${import.meta.env.VITE_API_URL || 'http://localhost:5003'}${user.profilePicture}`}
-                                    alt={user.username}
-                                    style={{ width: '24px', height: '24px', borderRadius: '50%', objectFit: 'cover' }}
+                                    src={user.profilePicture ? (user.profilePicture.startsWith('http') ? user.profilePicture : `${import.meta.env.VITE_API_URL}${user.profilePicture}`) : "https://api.dicebear.com/7.x/avataaars/svg?seed=" + user.username}
+                                    alt="Profile"
+                                    style={{ width: '30px', height: '30px', borderRadius: '50%', border: '2px solid black' }}
                                 />
-                            ) : (
-                                <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: 'var(--accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '0.8rem', fontWeight: 'bold' }}>
-                                    {user.username?.charAt(0).toUpperCase()}
+                                <span style={{ fontWeight: 'bold', textTransform: 'uppercase' }}>{user.username}</span>
+                            </div>
+
+                            {showDropdown && (
+                                <div style={{
+                                    position: 'absolute',
+                                    top: '100%',
+                                    right: 0,
+                                    width: '200px',
+                                    paddingTop: '10px', // Invisible bridge to prevent closing
+                                    zIndex: 1000
+                                }}>
+                                    <div style={{
+                                        background: 'white',
+                                        border: '3px solid black',
+                                        boxShadow: '8px 8px 0px black',
+                                        display: 'flex',
+                                        flexDirection: 'column'
+                                    }}>
+                                        <Link to="/profile" onClick={playNavSound} style={{ padding: '15px', fontWeight: 'bold', color: 'black', textDecoration: 'none', borderBottom: '2px solid black', hover: { background: '#f0f0f0' } }}>
+                                            PROFILE
+                                        </Link>
+                                        <button onClick={() => { playNavSound(); handleLogout(); }} style={{ padding: '15px', fontWeight: 'bold', color: 'white', background: 'red', border: 'none', cursor: 'pointer', textAlign: 'left', fontFamily: 'Space Grotesk' }}>
+                                            LOGOUT
+                                        </button>
+                                    </div>
                                 </div>
                             )}
-                            <span style={{ fontWeight: '600', color: 'var(--text-primary)', fontSize: '0.9rem' }}>{user.username}</span>
                         </div>
-
-                        <button onClick={handleLogout} style={{ background: 'none', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center' }}>
-                            <LogOut size={20} />
-                        </button>
                     </>
                 ) : (
                     <>
-                        <Link to="/login" style={{ color: 'var(--text-secondary)', fontWeight: '500' }}>Login</Link>
-                        <Link to="/register" className="btn btn-primary" style={{ padding: '8px 16px', fontSize: '0.9rem' }}>Get Started</Link>
+                        <NavLink to="/login" onClick={playNavSound} style={{ fontWeight: '700', textTransform: 'uppercase' }}>LOGIN</NavLink>
+                        <Link to="/register" onClick={playNavSound} style={{ textDecoration: 'none' }}>
+                            <button className="neo-btn" style={{ padding: '10px 25px', fontSize: '1rem' }}>
+                                Get Started
+                            </button>
+                        </Link>
                     </>
                 )}
             </div>
