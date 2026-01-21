@@ -2,7 +2,9 @@
 
 > **The "Anti-Algorithm" Social Platform.** A premium, Neo-Brutalist community space designed for connection, not consumption.
 
-[![HobbyHub Demo](./client/public/img/bg-image.png)](./client/public/demo.mp4)
+<video src="https://github.com/AyushAgrawal2004/HobbyHub/raw/main/client/public/demo.mp4" controls="controls" style="max-width: 100%;">
+  Your browser does not support the video tag.
+</video>
 
 *Click the badge above to watch the walkthrough video.*
 
