@@ -2,7 +2,7 @@
 
 > **The "Anti-Algorithm" Social Platform.** A premium, Neo-Brutalist community space designed for connection, not consumption.
 
-[![HobbyHub Demo](https://img.shields.io/badge/WATCH_DEMO-CLICK_HERE-black?style=for-the-badge&logo=youtube)](./client/public/demo.mp4)
+[![HobbyHub Demo](./client/public/img/bg-image.png)](./client/public/demo.mp4)
 
 *Click the badge above to watch the walkthrough video.*
 
