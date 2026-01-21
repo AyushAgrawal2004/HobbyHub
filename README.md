@@ -1,84 +1,89 @@
-# HobbyHub 🎨
+# ⚡ HobbyHub v2.0
 
-HobbyHub is a premium social platform designed for hobbyists to connect, share communities, and interact in real-time. Built with the MERN stack (MongoDB, Express, React, Node.js) and powered by Socket.io for live features.
+> **The "Anti-Algorithm" Social Platform.** A premium, Neo-Brutalist community space designed for connection, not consumption.
 
-![HobbyHub Preview](./client/public/vite.svg) *Add a screenshot here*
+[![HobbyHub Demo](https://img.shields.io/badge/WATCH_DEMO-CLICK_HERE-black?style=for-the-badge&logo=youtube)](./client/public/demo.mov)
 
-## 🚀 Features
+*Click the badge above to watch the walkthrough video.*
 
-- **Real-time Global Chat**: Live messaging with audio notifications and typing indicators.
-- **Admin Moderation**: Admins can block users in chat, automatically censoring their messages.
-- **Dynamic Onboarding**: A smooth, glassmorphism-styled welcome tutorial for new users.
-- **Profile Customization**: Users can upload profile pictures that sync instantly across the app.
-- **Groups & Events**: Create, join, and manage hobby groups and schedule events.
-- **Contests**: Register for hobby contests (Admin managed).
-- **Responsive UI**: Built with modern CSS variables, glassmorphism effects, and Framer Motion animations.
+---
 
-## 🛠️ Tech Stack
+## 🎨 The Philosophy: Neo-Brutalism
+HobbyHub v2.0 ditches the generic "corporate clean" look for a raw, expressive design system that feels alive.
 
-- **Frontend**: React (Vite), Framer Motion, Lucide React, Axios
-- **Backend**: Node.js, Express, MongoDB
-- **Real-time**: Socket.io
-- **Authentication**: JWT (JSON Web Tokens)
-- **File Storage**: Cloudinary (Cloud uploads)
+*   **⚠️ High Voltage Aesthetics**: High contrast, thick borders, Hard shadows, and vibrant accent colors.
+*   **🔊 Tactile Audio Feedback**: Every interaction has weight. Magnetic buttons click, keyboards clack, and notifications chime.
+*   **📖 Comic Book Storytelling**: The "About" page isn't just text—it's an interactive comic narrative pitting "The Squad" (User Community) against "The Algorithm" (Villain).
 
-## 📦 Installation
+---
 
-Prerequisites: Node.js and MongoDB installed locally or a generic Atlas URI.
+## 🚀 Unique Features
 
-1.  **Clone the repository**
+### 1. **Immersive "Vibe" UI**
+This isn't just a dashboard; it's a cockpit.
+*   **Glassmorphism & Parallax**: Depth-based layers that react to mouse movement.
+*   **GSAP Scroll Animations**: Elements crash, slide, and reveal with physics-based motion.
+*   **Bento Grid Layout**: A responsive, asymmetrical dashboard that breaks the monotony of lists.
+
+### 2. **Real-Time Connection (Socket.io)**
+*   **Global Chat Room**: Jump into the "The Loop" — a live, anonymous-friendly chat with typing indicators and audio alerts.
+*   **Live Polling**: Vote in real-time and watch results update instantly across all clients.
+
+### 3. **Gamified Community**
+*   **Contest System**: Admins launch hobby challenges. Users form teams, register, and compete.
+*   **Role-Based Access**: Specialized dashboards for Admins (The Overseers) and Users (The Rebels).
+*   **Profile Identity**: Customize your "Identity Card" with cloud-hosted avatars and bios.
+
+---
+
+## 🛠️ Tech Stack: The Engine Room
+
+Built with the **MERN Stack** (MongoDB, Express, React, Node.js) + **Real-time Wings**.
+
+*   **Frontend**: React (Vite), Framer Motion, GSAP (ScrollTrigger), Lucide React.
+*   **Backend**: Node.js, Express, Socket.io.
+*   **Database**: MongoDB Atlas (Cloud).
+*   **Storage**: Cloudinary (Image & Audio optimization).
+*   **Deployment**: Render.
+
+---
+
+## 📦 Installation & Setup
+
+1.  **Clone the Repo**:
     ```bash
-    git clone https://github.com/yourusername/hobbyhub.git
-    cd hobbyhub
+    git clone https://github.com/YourUsername/HobbyHub.git
+    cd HobbyHub
     ```
 
-2.  **Server Setup**
+2.  **Install Dependencies**:
     ```bash
+    # Server
     cd server
     npm install
-    # Create .env file based on .env.example
-    npm run dev
-    ```
-
-3.  **Client Setup**
-    ```bash
+    
+    # Client
     cd ../client
     npm install
-    # Create .env file based on .env.example
+    ```
+
+3.  **Environment Variables**:
+    Create `.env` files in both `server/` and `client/` (see `.env.example`).
+
+4.  **Launch**:
+    ```bash
+    # Terminal 1 (Server)
+    cd server
+    npm start
+
+    # Terminal 2 (Client)
+    cd client
     npm run dev
     ```
 
-4.  **Access the App**
-    Open [http://localhost:5173](http://localhost:5173) in your browser.
-
-## 🔑 Environment Variables
-
-### Server (`server/.env`)
-```env
-PORT=5003
-MONGODB_URI=mongodb://localhost:27017/hobbyhub
-JWT_SECRET=your_jwt_secret_key_here
-```
-
-### Client (`client/.env`)
-```env
-VITE_API_URL=http://localhost:5003
-```
-
-## 🛡️ Admin Features
-
-- **Role-based Access**: Admin users have special privileges.
-- **Chat Blocking**: admins can toggle block status for users directly from the chat interface.
-- **User Management**: Admins can view/manage users.
+---
 
 ## 🤝 Contributing
+Join the resistance. Fork the repo, break some code, and submit a PR. 
 
-1.  Fork the repo
-2.  Create your feature branch (`git checkout -b feature/amazing-feature`)
-3.  Commit your changes (`git commit -m 'Add some amazing feature'`)
-4.  Push to the branch (`git push origin feature/amazing-feature`)
-5.  Open a Pull Request
-
-## 📄 License
-
-This project is licensed under the MIT License.
+**License**: MIT
